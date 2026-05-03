@@ -62,6 +62,32 @@ const VS_OUTCOMES = [
   '🌊 {w} washed {l} so hard they need to dry off',
 ];
 
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+  // Fires when onboarding is completed — pending goes from true to false
+  if (oldMember.pending === true && newMember.pending === false) {
+    try {
+      const channel = await client.channels.fetch(WELCOME_CHANNEL_ID);
+      if (!channel) return;
+ 
+      const embed = new EmbedBuilder()
+        .setTitle(`👋 Welcome to the server, ${newMember.displayName}!`)
+        .setDescription(
+          `> Glad to have you here!\n` +
+          `> Head over to <#YOUR_ROLES_CHANNEL_ID> to grab your roles.\n` +
+          `> Pick a color, make yourself at home. 🎨`
+        )
+        .setColor(0x7F77DD)
+        .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: 'LIFELESS TAMIL' })
+        .setTimestamp();
+ 
+      await channel.send({ content: `${newMember}`, embeds: [embed] });
+    } catch (err) {
+      console.error('Welcome message error:', err);
+    }
+  }
+});
+
 client.once('clientReady', () => {
   console.log(`Bot is online as ${client.user.tag}`);
 });
