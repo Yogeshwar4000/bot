@@ -26,6 +26,21 @@ const commands = [
         .setRequired(true)
     )
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName('vs')
+    .setDescription('Who wins in a fight?')
+    .addUserOption(option =>
+      option.setName('user1')
+        .setDescription('First user')
+        .setRequired(true)
+    )
+    .addUserOption(option =>
+      option.setName('user2')
+        .setDescription('Second user')
+        .setRequired(true)
+    )
+    .toJSON(),
 ];
 
 const rest = new REST({ version: '10' })

@@ -38,6 +38,30 @@ const ALL_COLOR_IDS = COLOR_ROLES.map(c => c.value);
 // Track mirrored users
 const mirroredUsers = new Set();
 
+// VS battle outcomes — {w} = winner, {l} = loser
+const VS_OUTCOMES = [
+  '🔥 {w} absolutely destroys {l}',
+  '💨 {w} farts their way to the win against {l}',
+  '😭 {w} slimes {l} neg diff',
+  '🍽️ {w} ate and left no crumbs, {l} didn\'t even get a plate',
+  '👟 {w} ran {l} out of the server',
+  '🪦 {l} was never a threat. {w} wins easily',
+  '🤡 {l} showed up. {w} didn\'t even try and still won',
+  '💀 {w} ended {l}\'s career in 3 seconds',
+  '🧹 {w} swept {l} without breaking a sweat',
+  '😤 {w} looked at {l} and they gave up instantly',
+  '🗑️ {l} got thrown out like last week\'s trash by {w}',
+  '👑 {w} is built different. {l} never had a chance',
+  '📞 {l} called their mum crying after {w} was done with them',
+  '🎤 {w} dropped the mic on {l} and walked away',
+  '💤 {w} beat {l} in their sleep',
+  '🐛 {l} got cooked. {w} didn\'t even season them',
+  '🏳️ {l} waved the white flag before {w} even started',
+  '⚰️ {w} sent {l} to another dimension',
+  '🤧 {l} was a disappointment. {w} expected more',
+  '🌊 {w} washed {l} so hard they need to dry off',
+];
+
 client.once('clientReady', () => {
   console.log(`Bot is online as ${client.user.tag}`);
 });
@@ -161,6 +185,28 @@ client.on('interactionCreate', async interaction => {
       ephemeral: true
     });
   }
+
+  // /vs command
+  if (interaction.isChatInputCommand() &&
+      interaction.commandName === 'vs') {
+
+    const user1 = interaction.options.getUser('user1');
+    const user2 = interaction.options.getUser('user2');
+
+    // Randomly pick winner and loser
+    const [winner, loser] = Math.random() < 0.5
+      ? [user1, user2]
+      : [user2, user1];
+
+    // Pick a random outcome
+    const outcome = VS_OUTCOMES[Math.floor(Math.random() * VS_OUTCOMES.length)];
+    const result = outcome
+      .replace('{w}', `**${winner.displayName}**`)
+      .replace('{l}', `**${loser.displayName}**`);
+
+    await interaction.reply(`⚔️ ${result}`);
+  }
+
 });
 
 client.on('messageCreate', async message => {
