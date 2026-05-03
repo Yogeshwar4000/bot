@@ -35,6 +35,9 @@ const COLOR_ROLES = [
 // All color role IDs in a flat array — used for cleanup
 const ALL_COLOR_IDS = COLOR_ROLES.map(c => c.value);
 
+// Track mirrored users
+const mirroredUsers = new Set();
+
 client.once('clientReady', () => {
   console.log(`Bot is online as ${client.user.tag}`);
 });
@@ -109,12 +112,68 @@ client.on('interactionCreate', async interaction => {
       });
     }
   }
+
+  // /mirror command
+  if (interaction.isChatInputCommand() &&
+      interaction.commandName === 'mirror') {
+
+    const target = interaction.options.getUser('user');
+    const member = await interaction.guild.members.fetch(target.id);
+    const executor = interaction.member;
+
+    if (target.bot) {
+      return await interaction.reply({
+        content: '❌ Cannot mirror a bot.',
+        ephemeral: true
+      });
+    }
+
+    if (member.roles.highest.position >= executor.roles.highest.position) {
+      return await interaction.reply({
+        content: '❌ You cannot mirror someone with an equal or higher role than you.',
+        ephemeral: true
+      });
+    }
+
+    mirroredUsers.add(target.id);
+    await interaction.reply({
+      content: `🪞 Now mirroring **${target.username}**. Use /unmirror to stop.`,
+      ephemeral: true
+    });
+  }
+
+  // /unmirror command
+  if (interaction.isChatInputCommand() &&
+      interaction.commandName === 'unmirror') {
+
+    const target = interaction.options.getUser('user');
+
+    if (!mirroredUsers.has(target.id)) {
+      return await interaction.reply({
+        content: `❌ **${target.username}** is not being mirrored.`,
+        ephemeral: true
+      });
+    }
+
+    mirroredUsers.delete(target.id);
+    await interaction.reply({
+      content: `🪞 Stopped mirroring **${target.username}**.`,
+      ephemeral: true
+    });
+  }
 });
+
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
+
+  // Mirror
+  if (mirroredUsers.has(message.author.id)) {
+    await message.reply(message.content);
+  }
 
   if (message.content.toLowerCase().includes('lifeless')) {
     await message.reply('you called? 👀');
   }
 });
+
 client.login(process.env.BOT_TOKEN);
