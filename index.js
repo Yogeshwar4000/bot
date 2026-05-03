@@ -66,14 +66,14 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
   // Fires when onboarding is completed — pending goes from true to false
   if (oldMember.pending === true && newMember.pending === false) {
     try {
-      const channel = await client.channels.fetch(WELCOME_CHANNEL_ID);
+      const channel = await client.channels.fetch(1162441199181893724);
       if (!channel) return;
  
       const embed = new EmbedBuilder()
         .setTitle(`👋 Welcome to the server, ${newMember.displayName}!`)
         .setDescription(
           `> Glad to have you here!\n` +
-          `> Head over to <#YOUR_ROLES_CHANNEL_ID> to grab your roles.\n` +
+          `> Head over to <#1162657228340334663> to grab your roles.\n` +
           `> Pick a color, make yourself at home. 🎨`
         )
         .setColor(0x7F77DD)
