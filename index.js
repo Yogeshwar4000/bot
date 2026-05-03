@@ -6,7 +6,12 @@ const {
 } = require('discord.js');
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
 });
 
 const COLOR_ROLES = [
@@ -105,5 +110,11 @@ client.on('interactionCreate', async interaction => {
     }
   }
 });
+client.on('messageCreate', async message => {
+  if (message.author.bot) return;
 
+  if (message.content.toLowerCase().includes('lifeless')) {
+    await message.reply('you called? 👀');
+  }
+});
 client.login(process.env.BOT_TOKEN);
