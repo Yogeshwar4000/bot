@@ -61,12 +61,16 @@ const VS_OUTCOMES = [
   '🤧 {l} was a disappointment. {w} expected more',
   '🌊 {w} washed {l} so hard they need to dry off',
 ];
+const WELCOME_CHANNEL_ID = '1162441199181893724';
+client.once('clientReady', () => {
+  console.log(`Bot is online as ${client.user.tag}`);
+});
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
   // Fires when onboarding is completed — pending goes from true to false
   if (oldMember.pending === true && newMember.pending === false) {
     try {
-      const channel = await client.channels.fetch(1162441199181893724);
+      const channel = await client.channels.fetch(WELCOME_CHANNEL_ID);
       if (!channel) return;
  
       const embed = new EmbedBuilder()
